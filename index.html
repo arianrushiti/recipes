@@ -130,6 +130,34 @@
         background: var(--surface); color: var(--ink); cursor: pointer;
       }
       .tools button[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+
+      /* Cookbook toolbar */
+      .toolbar { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+      .search {
+        flex: 1 1 220px; min-height: 44px; padding: 10px 14px; font-size: 1rem;
+        border: 1px solid var(--line); border-radius: 10px;
+        background: var(--surface); color: var(--ink);
+      }
+      .filters { display: flex; gap: 8px; flex-wrap: wrap; }
+      .filter-btn {
+        min-height: 44px; padding: 8px 16px; font-size: 0.95rem; font-weight: 600;
+        border-radius: 999px; border: 1px solid var(--line);
+        background: var(--surface); color: var(--ink); cursor: pointer;
+      }
+      .filter-btn[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+      .count { color: var(--ink-soft); font-size: 0.95rem; margin: 18px 0 0; }
+      .empty { color: var(--ink-soft); font-size: 1.05rem; margin: 32px 0; }
+      .card-wrap { position: relative; }
+      .card-wrap[hidden] { display: none; }
+      .fav {
+        position: absolute; top: 10px; right: 10px; z-index: 1;
+        width: 44px; height: 44px; border-radius: 50%; border: none;
+        background: rgba(255, 255, 255, 0.92); color: #1c1a17;
+        font-size: 1.35rem; line-height: 1; cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 1px 6px rgba(0, 0, 0, 0.25);
+      }
+      .fav[aria-pressed="true"] { color: var(--accent); }
     </style>
   </head>
   <body>
@@ -138,37 +166,137 @@
         <div class="index-head">
           <h1>Recipes</h1>
         </div>
-        <div class="cards">
-          <a class="card" href="chipotle-steak-rice-bowl.html">
-            <img src="https://lh3.googleusercontent.com/d/12-LSIS1N_sVzjM7GP43NaMG23-fYwO63=w1600" alt="Sliced chipotle steak over cilantro lime rice with a lime wedge" />
-            <div class="card-body">
-              <h2>Chipotle Steak Rice Bowl</h2>
-              <p class="card-meta">35 min total · Serves 2 · Easy</p>
-            </div>
-          </a>
-          <a class="card" href="chipotle-chicken-rice-bowl.html">
-            <img src="https://lh3.googleusercontent.com/d/18dHLntzIhoQZ62AbQlHsL4_JLh_F6AnS=w1600" alt="Diced chipotle chicken over cilantro lime rice" />
-            <div class="card-body">
-              <h2>Chipotle Chicken Rice Bowl</h2>
-              <p class="card-meta">35 min total · Serves 2 · Easy</p>
-            </div>
-          </a>
-          <a class="card" href="viral-costco-chicken-rice.html">
-            <img src="https://lh3.googleusercontent.com/d/10hfjKLo2C3o1CVYjyZbJc8LJVsFedGfU=w1600" alt="Shredded rotisserie chicken folded into seasoned rice with green onions" />
-            <div class="card-body">
-              <h2>Viral Costco Chicken Rice</h2>
-              <p class="card-meta">30 min total · Serves 4 · Easy</p>
-            </div>
-          </a>
-          <a class="card" href="high-protein-baked-mac-and-cheese.html">
-            <img src="https://lh3.googleusercontent.com/d/1wkNfjG5qsjWm_bbKe4UV7TD5KpbBo32e=w1600" alt="Baked cavatappi mac and cheese with a golden brown top in a 9x13 dish" />
-            <div class="card-body">
-              <h2>High-Protein Baked Mac and Cheese</h2>
-              <p class="card-meta">50 min total · Serves 12 · Medium</p>
-            </div>
-          </a>
+        <div class="toolbar">
+          <input id="search" class="search" type="search" placeholder="Search recipes" aria-label="Search recipes" />
+          <div class="filters">
+            <button type="button" class="filter-btn" data-filter="all" aria-pressed="true">All</button>
+            <button type="button" class="filter-btn" data-filter="easy" aria-pressed="false">Easy</button>
+            <button type="button" class="filter-btn" data-filter="medium" aria-pressed="false">Medium</button>
+            <button type="button" class="filter-btn" id="fav-only" aria-pressed="false">★ Favorites</button>
+          </div>
         </div>
+        <p class="count" id="count"></p>
+        <div class="cards">
+          <div class="card-wrap" data-slug="chipotle-steak-rice-bowl" data-title="chipotle steak rice bowl" data-difficulty="easy">
+            <a class="card" href="chipotle-steak-rice-bowl.html">
+              <img src="https://lh3.googleusercontent.com/d/12-LSIS1N_sVzjM7GP43NaMG23-fYwO63=w1600" alt="Sliced chipotle steak over cilantro lime rice with a lime wedge" />
+              <div class="card-body">
+                <h2>Chipotle Steak Rice Bowl</h2>
+                <p class="card-meta">35 min total · Serves 2 · Easy</p>
+              </div>
+            </a>
+            <button type="button" class="fav" data-slug="chipotle-steak-rice-bowl" aria-pressed="false" aria-label="Save Chipotle Steak Rice Bowl to favorites">☆</button>
+          </div>
+          <div class="card-wrap" data-slug="chipotle-chicken-rice-bowl" data-title="chipotle chicken rice bowl" data-difficulty="easy">
+            <a class="card" href="chipotle-chicken-rice-bowl.html">
+              <img src="https://lh3.googleusercontent.com/d/18dHLntzIhoQZ62AbQlHsL4_JLh_F6AnS=w1600" alt="Diced chipotle chicken over cilantro lime rice" />
+              <div class="card-body">
+                <h2>Chipotle Chicken Rice Bowl</h2>
+                <p class="card-meta">35 min total · Serves 2 · Easy</p>
+              </div>
+            </a>
+            <button type="button" class="fav" data-slug="chipotle-chicken-rice-bowl" aria-pressed="false" aria-label="Save Chipotle Chicken Rice Bowl to favorites">☆</button>
+          </div>
+          <div class="card-wrap" data-slug="viral-costco-chicken-rice" data-title="viral costco chicken rice" data-difficulty="easy">
+            <a class="card" href="viral-costco-chicken-rice.html">
+              <img src="https://lh3.googleusercontent.com/d/10hfjKLo2C3o1CVYjyZbJc8LJVsFedGfU=w1600" alt="Shredded rotisserie chicken folded into seasoned rice with green onions" />
+              <div class="card-body">
+                <h2>Viral Costco Chicken Rice</h2>
+                <p class="card-meta">30 min total · Serves 4 · Easy</p>
+              </div>
+            </a>
+            <button type="button" class="fav" data-slug="viral-costco-chicken-rice" aria-pressed="false" aria-label="Save Viral Costco Chicken Rice to favorites">☆</button>
+          </div>
+          <div class="card-wrap" data-slug="high-protein-baked-mac-and-cheese" data-title="high-protein baked mac and cheese" data-difficulty="medium">
+            <a class="card" href="high-protein-baked-mac-and-cheese.html">
+              <img src="https://lh3.googleusercontent.com/d/1wkNfjG5qsjWm_bbKe4UV7TD5KpbBo32e=w1600" alt="Baked cavatappi mac and cheese with a golden brown top in a 9x13 dish" />
+              <div class="card-body">
+                <h2>High-Protein Baked Mac and Cheese</h2>
+                <p class="card-meta">50 min total · Serves 12 · Medium</p>
+              </div>
+            </a>
+            <button type="button" class="fav" data-slug="high-protein-baked-mac-and-cheese" aria-pressed="false" aria-label="Save High-Protein Baked Mac and Cheese to favorites">☆</button>
+          </div>
+          <div class="card-wrap" data-slug="beef-and-broccoli" data-title="beef and broccoli" data-difficulty="easy">
+            <a class="card" href="beef-and-broccoli.html">
+              <img src="https://lh3.googleusercontent.com/d/1Fe_FdVs7pu9VWETojZ1HPNLYSqqJdpfJ=w1600" alt="Glossy beef and broccoli stir fry over white rice" />
+              <div class="card-body">
+                <h2>Beef and Broccoli</h2>
+                <p class="card-meta">30 min total · Serves 4 · Easy</p>
+              </div>
+            </a>
+            <button type="button" class="fav" data-slug="beef-and-broccoli" aria-pressed="false" aria-label="Save Beef and Broccoli to favorites">☆</button>
+          </div>
+        </div>
+        <p class="empty" id="empty" hidden>No recipes match. Try a different search or filter.</p>
       </main>
     </div>
+
+    <script>
+      (function () {
+        var KEY = 'recipes-favorites';
+        function loadFavs() { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) { return []; } }
+        function saveFavs(f) { try { localStorage.setItem(KEY, JSON.stringify(f)); } catch (e) {} }
+        var favs = loadFavs();
+        var query = '';
+        var difficulty = 'all';
+        var favOnly = false;
+        var wraps = Array.prototype.slice.call(document.querySelectorAll('.card-wrap'));
+        var countEl = document.getElementById('count');
+        var emptyEl = document.getElementById('empty');
+        function renderFavs() {
+          document.querySelectorAll('.fav').forEach(function (b) {
+            var on = favs.indexOf(b.getAttribute('data-slug')) !== -1;
+            b.setAttribute('aria-pressed', on ? 'true' : 'false');
+            b.textContent = on ? '\u2605' : '\u2606';
+          });
+        }
+        function apply() {
+          var shown = 0;
+          wraps.forEach(function (w) {
+            var ok = true;
+            if (query && w.getAttribute('data-title').toLowerCase().indexOf(query) === -1) ok = false;
+            if (difficulty !== 'all' && w.getAttribute('data-difficulty') !== difficulty) ok = false;
+            if (favOnly && favs.indexOf(w.getAttribute('data-slug')) === -1) ok = false;
+            w.hidden = !ok;
+            if (ok) shown += 1;
+          });
+          countEl.textContent = shown + (shown === 1 ? ' recipe' : ' recipes');
+          emptyEl.hidden = shown !== 0;
+        }
+        document.getElementById('search').addEventListener('input', function (e) {
+          query = e.target.value.trim().toLowerCase();
+          apply();
+        });
+        document.querySelectorAll('[data-filter]').forEach(function (b) {
+          b.addEventListener('click', function () {
+            difficulty = b.getAttribute('data-filter');
+            document.querySelectorAll('[data-filter]').forEach(function (x) {
+              x.setAttribute('aria-pressed', x === b ? 'true' : 'false');
+            });
+            apply();
+          });
+        });
+        var favBtn = document.getElementById('fav-only');
+        favBtn.addEventListener('click', function () {
+          favOnly = !favOnly;
+          favBtn.setAttribute('aria-pressed', favOnly ? 'true' : 'false');
+          apply();
+        });
+        document.querySelectorAll('.fav').forEach(function (b) {
+          b.addEventListener('click', function (e) {
+            e.preventDefault();
+            var slug = b.getAttribute('data-slug');
+            var i = favs.indexOf(slug);
+            if (i === -1) { favs.push(slug); } else { favs.splice(i, 1); }
+            saveFavs(favs);
+            renderFavs();
+            apply();
+          });
+        });
+        renderFavs();
+        apply();
+      })();
+    </script>
   </body>
 </html>

@@ -251,6 +251,7 @@
 
         <div class="tools">
           <button type="button" class="wakelock" aria-pressed="false">Keep screen awake</button>
+          <button type="button" id="fav-btn" aria-pressed="false">\u2606 Save to favorites</button>
         </div>
         <a class="backlink" href="./">← All recipes</a>
       </article>
@@ -279,5 +280,27 @@ var wakeLock = null;
 })();
     </script>
     </div>
+
+    <script>
+      (function () {
+        var KEY = 'recipes-favorites';
+        var slug = 'high-protein-baked-mac-and-cheese';
+        var btn = document.getElementById('fav-btn');
+        function loadFavs() { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) { return []; } }
+        function render() {
+          var on = loadFavs().indexOf(slug) !== -1;
+          btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+          btn.textContent = on ? '\u2605 Saved to favorites' : '\u2606 Save to favorites';
+        }
+        btn.addEventListener('click', function () {
+          var favs = loadFavs();
+          var i = favs.indexOf(slug);
+          if (i === -1) { favs.push(slug); } else { favs.splice(i, 1); }
+          try { localStorage.setItem(KEY, JSON.stringify(favs)); } catch (e) {}
+          render();
+        });
+        render();
+      })();
+    </script>
   </body>
 </html>
